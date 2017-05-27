@@ -1,49 +1,43 @@
 <html>
-	<head>
-		<style>
-			* {
-				padding:0;
-				margin: 0;
-			}
-			</style>
-	</head>
+<head>
+	<style>
+	</style>
+</head>
 <body>
+	<h1>js to gif</h1>
+	<ol>
+		<li>Write some HTML5 canvas code</li>
+		<li>Download gif</li>
+		<li>...</li>
+		<li>Profit!</li>
+	</ol>
 	<script src="b64.js"></script>
 	<script src="LZWEncoder.js"></script>
 	<script src="NeuQuant.js"></script>
 	<script src="GIFEncoder.js"></script>
 	<canvas id="bitmap" style="display:none"></canvas>
-	<img id="image">
+	<img id="image"><br>
+
+	<label>Frame Count</label>
+	<input id="frameCount" type="number" value="30"/>
+
+	<label>Delay</label>
+	<input id="delay" type="number" min="1" value="16"/>
+
+	<label>Width</label>
+	<input id="width" type="number" min="1" value="150"/>
+
+	<label>Height</label>
+	<input id="height" type="number" min="1" value="150"/>
+
+	<a href="#" onclick="javascript:encoder.download()">Download GIF</a>
+
 	<script>
-	var canvas = document.getElementById('bitmap');
-	var context = canvas.getContext('2d');
-
-	var encoder = new GIFEncoder();
-	encoder.setRepeat(0); //auto-loop
-	encoder.setDelay(16);
-	canvas.width = 150;
-	canvas.height = 150;
-	encoder.setSize(150,150);
-
-	encoder.start();
-
-	context.fillStyle = "rgb(255,255,255)";
-	context.fillRect(0,0,canvas.width, canvas.height); //GIF can't do transparent so do white
-
-	var now = new Date();
-	for(var i = 0; i < 60; i++){
-		now.setSeconds(now.getSeconds() + 1)
-		clock(now);
-	}
-	encoder.finish();
-	document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData())
-
 //based on: https://developer.mozilla.org/en/Canvas_tutorial/Basic_animations#An_animation_example_2
-function clock(now){
-	var ctx = context;
+function draw(t){
 	ctx.save();
-	context.fillStyle = "rgb(255,255,255)";
-	context.fillRect(0,0,150, 150); //GIF can't do transparent so do white
+	ctx.fillStyle = "rgb(255,255,255)";
+	ctx.fillRect(0,0,150, 150); //GIF can't do transparent so do white
 
 	ctx.translate(75,75);
 	ctx.scale(0.4,0.4);
@@ -78,9 +72,9 @@ function clock(now){
 	}
 	ctx.restore();
 
-	var sec = now.getSeconds();
-	var min = now.getMinutes();
-	var hr  = now.getHours();
+	var sec = t * 60;
+	var min = 0;
+	var hr  = 0;
 	hr = hr>=12 ? hr-12 : hr;
 
 	ctx.fillStyle = "black";
@@ -134,22 +128,101 @@ function clock(now){
 
 	ctx.restore();
 
-	encoder.addFrame(ctx);
 }
 </script>
 
-
-<div id="container" style="width:100%;height:400px;"></div>
+<div id="container" style="width:100%;height:50%;"></div>
 <script src="monaco-editor/min/vs/loader.js"></script>
 <script>
+function evalCode(code){
+	eval(code);
+	window.draw = draw; // Update the current one
+}
+
+(function(){
+	var editor;
+	var canvas = document.getElementById('bitmap');
+	var ctx = window.ctx = canvas.getContext('2d');
+	var inputs = {};
+	inputs.frameCount = document.getElementById('frameCount');
+	inputs.delay = document.getElementById('delay');
+	inputs.width = document.getElementById('width');
+	inputs.height = document.getElementById('height');
+
+	var encoder = new GIFEncoder();
+
+	// TODO: update gif in worker
+	function updateGif(){
+		var code = editor.getValue();
+		try {
+			evalCode(code);
+		} catch(err){
+			console.error(err);
+			return;
+		}
+
+		var frameCount = parseInt(inputs.frameCount.value, 10);
+		var delay = parseInt(inputs.delay.value, 10);
+		var width = parseInt(inputs.width.value, 10);
+		var height = parseInt(inputs.height.value, 10);
+
+		encoder.setRepeat(0); //auto-loop
+		encoder.setDelay(delay);
+		canvas.width = width;
+		canvas.height = height;
+		encoder.setSize(width,height);
+		encoder.start();
+		ctx.fillStyle = "rgb(255,255,255)";
+		ctx.fillRect(0,0,canvas.width, canvas.height); //GIF can't do transparent so do white
+
+		for(var i = 0; i < frameCount; i++){
+			window.draw(i/frameCount);
+			encoder.addFrame(ctx);
+		}
+		encoder.finish();
+
+		// Preview
+		document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
+	}
+
 	require.config({ paths: { 'vs': 'monaco-editor/min/vs' }});
 	require(['vs/editor/editor.main'], function() {
-		var editor = window.editor = monaco.editor.create(document.getElementById('container'), {
-			value: clock.toString(),
+		editor = monaco.editor.create(document.getElementById('container'), {
+			value: draw.toString(),
 			language: 'javascript',
 			theme: 'vs-dark'
 		});
+		init();
 	});
+
+	function debounce(func, wait, immediate) {
+		var timeout;
+		return function() {
+			var context = this, args = arguments;
+			var later = function() {
+				timeout = null;
+				if (!immediate) func.apply(context, args);
+			};
+			var callNow = immediate && !timeout;
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+			if (callNow) func.apply(context, args);
+		};
+	};
+
+	var updateGifDebounced = debounce(updateGif, 500);
+	function init(){
+		editor.onDidChangeModelContent(function(){
+			updateGifDebounced();
+		});
+		updateGifDebounced();
+
+		for(var name in inputs){
+			inputs[name].addEventListener('change', updateGifDebounced);
+			inputs[name].addEventListener('keydown', updateGifDebounced);
+		}
+	}
+})();
 </script>
 
 </body>
