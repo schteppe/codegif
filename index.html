@@ -94,17 +94,54 @@ function evalCode(code){
 	var canvas = document.getElementById('bitmap');
 	var ctx = window.ctx = canvas.getContext('2d');
 	var inputs = {};
+	var normalize = false;
 	inputs.frameCount = document.getElementById('frameCount');
 	inputs.delay = document.getElementById('delay');
 	inputs.width = document.getElementById('width');
 	inputs.height = document.getElementById('height');
 	inputs.normalize = document.getElementById('normalize');
 
-	var encoder = new GIFEncoder();
+	var working = false;
+	function setWorking(isWorking){
+		working = isWorking;
+		var style = document.getElementById('image').style;
+		style.border = working ? 'solid 3px red' : 'solid 3px white';
 
-	// TODO: update gif in worker
+	}
+	var encoder = new GIFEncoder();
+	var frame = 0, frameCount = 0;
+	var code;
+
+	setInterval(function(){
+		if(!working) return;
+
+		ctx.fillStyle = "rgb(255,255,255)";
+		if(normalize) ctx.fillRect(0,0,1,1); else ctx.fillRect(0,0,width,height);
+		try {
+			window.draw(frame/frameCount);
+		} catch(err){
+			console.error(err);
+			setWorking(false);
+			ctx.restore();
+			encoder.finish();
+			return;
+		}
+		encoder.addFrame(ctx);
+
+		frame++;
+		if(frame === frameCount){
+			setWorking(false);
+			ctx.restore();
+			encoder.finish();
+			document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
+		}
+
+	}, 50);
+
 	function updateGif(){
-		var code = editor.getValue();
+		if(working) return;
+
+		code = editor.getValue();
 		try {
 			evalCode(code);
 		} catch(err){
@@ -112,11 +149,12 @@ function evalCode(code){
 			return;
 		}
 
-		var frameCount = parseInt(inputs.frameCount.value, 10);
+		frame = 0;
+		frameCount = parseInt(inputs.frameCount.value, 10);
 		var delay = parseInt(inputs.delay.value, 10);
 		var width = parseInt(inputs.width.value, 10);
 		var height = parseInt(inputs.height.value, 10);
-		var normalize = inputs.normalize.checked;
+		normalize = inputs.normalize.checked;
 
 		encoder.setRepeat(0); //auto-loop
 		encoder.setDelay(delay);
@@ -124,23 +162,12 @@ function evalCode(code){
 		canvas.height = height;
 		encoder.setSize(width,height);
 		encoder.start();
+		setWorking(true);
 
 		ctx.save();
 		if(normalize){
-			ctx.scale(width,height); // Normalize!
+			ctx.scale(width,height);
 		}
-
-		for(var i = 0; i < frameCount; i++){
-			ctx.fillStyle = "rgb(255,255,255)";
-			if(normalize) ctx.fillRect(0,0,1,1); else ctx.fillRect(0,0,width,height);
-			window.draw(i/frameCount);
-			encoder.addFrame(ctx);
-		}
-		ctx.restore();
-		encoder.finish();
-
-		// Preview
-		document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
 	}
 
 	require.config({ paths: { 'vs': 'monaco-editor/min/vs' }});
@@ -168,16 +195,16 @@ function evalCode(code){
 		};
 	};
 
-	var updateGifDebounced = debounce(updateGif, 500);
+	var updateGifDebounced = debounce(updateGif, 1000);
 	function init(){
 		editor.onDidChangeModelContent(function(){
-			updateGifDebounced();
+			updateGif();
 		});
-		updateGifDebounced();
+		updateGif();
 
 		for(var name in inputs){
-			inputs[name].addEventListener('change', updateGifDebounced);
-			inputs[name].addEventListener('keydown', updateGifDebounced);
+			inputs[name].addEventListener('change', updateGif);
+			inputs[name].addEventListener('keydown', updateGif);
 		}
 		document.getElementById('downloadButton').addEventListener('click', function(){
 			encoder.download();
