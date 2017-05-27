@@ -1,1 +1,3 @@
 # code2gif
+
+Or canvasgif ? Still looking for a good name...
