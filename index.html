@@ -111,6 +111,7 @@ function evalCode(code){
 	var encoder = new GIFEncoder();
 	var frame = 0, frameCount = 0;
 	var code;
+	var dirty = false;
 
 	setInterval(function(){
 		if(!working) return;
@@ -126,6 +127,7 @@ function evalCode(code){
 			encoder.finish();
 			return;
 		}
+		console.log('Adding frame ' + frame + '...');
 		encoder.addFrame(ctx);
 
 		frame++;
@@ -134,12 +136,20 @@ function evalCode(code){
 			ctx.restore();
 			encoder.finish();
 			document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
+			console.log('end');
+			if(dirty){
+				dirty = false;
+				updateGif();
+			}
 		}
 
 	}, 50);
 
 	function updateGif(){
-		if(working) return;
+		if(working){
+			dirty = true; // update once more when done
+			return;
+		}
 
 		code = editor.getValue();
 		try {
@@ -162,6 +172,7 @@ function evalCode(code){
 		canvas.height = height;
 		encoder.setSize(width,height);
 		encoder.start();
+		console.log('start');
 		setWorking(true);
 
 		ctx.save();
