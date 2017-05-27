@@ -39,6 +39,9 @@
 		<label>Height</label>
 		<input id="height" type="number" min="1" value="150"/>
 
+		<input id="normalize" type="checkbox" value="1"/>
+		<label>Normalized coords</label>
+
 	</p>
 
 	<script>
@@ -185,6 +188,7 @@ function evalCode(code){
 	inputs.delay = document.getElementById('delay');
 	inputs.width = document.getElementById('width');
 	inputs.height = document.getElementById('height');
+	inputs.normalize = document.getElementById('normalize');
 
 	var encoder = new GIFEncoder();
 
@@ -202,6 +206,7 @@ function evalCode(code){
 		var delay = parseInt(inputs.delay.value, 10);
 		var width = parseInt(inputs.width.value, 10);
 		var height = parseInt(inputs.height.value, 10);
+		var normalize = inputs.normalize.checked;
 
 		encoder.setRepeat(0); //auto-loop
 		encoder.setDelay(delay);
@@ -209,13 +214,21 @@ function evalCode(code){
 		canvas.height = height;
 		encoder.setSize(width,height);
 		encoder.start();
-		ctx.fillStyle = "rgb(255,255,255)";
-		ctx.fillRect(0,0,canvas.width, canvas.height); //GIF can't do transparent so do white
+
+		ctx.fillStyle = "white";
+		ctx.save();
+		if(normalize){
+			ctx.scale(width,height); // Normalize!
+			ctx.fillRect(0,0,1,1);
+		} else {
+			ctx.fillRect(0,0,width,height);
+		}
 
 		for(var i = 0; i < frameCount; i++){
 			window.draw(i/frameCount);
 			encoder.addFrame(ctx);
 		}
+		ctx.restore();
 		encoder.finish();
 
 		// Preview
