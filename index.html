@@ -34,99 +34,99 @@
 
 	<script>
 //based on: https://developer.mozilla.org/en/Canvas_tutorial/Basic_animations#An_animation_example_2
-function draw(t){
-	ctx.save();
-	ctx.fillStyle = "rgb(255,255,255)";
-	ctx.fillRect(0,0,150, 150); //GIF can't do transparent so do white
+function draw(t){ // t is between 0 and 1
+	save(); // equivalent to ctx.save()
+	fillStyle = "rgb(255,255,255)";  // equivalent to ctx.fillStyle = ...
+	fillRect(0,0,150, 150);
 
-	ctx.translate(75,75);
-	ctx.scale(0.4,0.4);
-	ctx.rotate(-Math.PI/2);
-	ctx.strokeStyle = "black";
-	ctx.fillStyle = "white";
-	ctx.lineWidth = 8;
-	ctx.lineCap = "round";
+	translate(75,75);
+	scale(0.4,0.4);
+	rotate(-PI/2); // No need to use Math.PI. PI is shorter!
+	strokeStyle = "black";
+	fillStyle = "white";
+	lineWidth = 8;
+	lineCap = "round";
 
 	// Hour marks
-	ctx.save();
+	save();
 	for (var i=0;i<12;i++){
-		ctx.beginPath();
-		ctx.rotate(Math.PI/6);
-		ctx.moveTo(100,0);
-		ctx.lineTo(120,0);
-		ctx.stroke();
+		beginPath();
+		rotate(PI/6);
+		moveTo(100,0);
+		lineTo(120,0);
+		stroke();
 	}
-	ctx.restore();
+	restore();
 
 	// Minute marks
-	ctx.save();
-	ctx.lineWidth = 5;
+	save();
+	lineWidth = 5;
 	for (i=0;i<60;i++){
 		if (i%5!=0) {
-			ctx.beginPath();
-			ctx.moveTo(117,0);
-			ctx.lineTo(120,0);
-			ctx.stroke();
+			beginPath();
+			moveTo(117,0);
+			lineTo(120,0);
+			stroke();
 		}
-		ctx.rotate(Math.PI/30);
+		rotate(PI/30);
 	}
-	ctx.restore();
+	restore();
 
 	var sec = t * 60;
 	var min = 0;
 	var hr  = 0;
 	hr = hr>=12 ? hr-12 : hr;
 
-	ctx.fillStyle = "black";
+	fillStyle = "black";
 
 	// write Hours
-	ctx.save();
-	ctx.rotate( hr*(Math.PI/6) + (Math.PI/360)*min + (Math.PI/21600)*sec )
-	ctx.lineWidth = 14;
-	ctx.beginPath();
-	ctx.moveTo(-20,0);
-	ctx.lineTo(80,0);
-	ctx.stroke();
-	ctx.restore();
+	save();
+	rotate( hr*(PI/6) + (PI/360)*min + (PI/21600)*sec )
+	lineWidth = 14;
+	beginPath();
+	moveTo(-20,0);
+	lineTo(80,0);
+	stroke();
+	restore();
 
 	// write Minutes
-	ctx.save();
-	ctx.rotate( (Math.PI/30)*min + (Math.PI/1800)*sec )
-	ctx.lineWidth = 10;
-	ctx.beginPath();
-	ctx.moveTo(-28,0);
-	ctx.lineTo(112,0);
-	ctx.stroke();
-	ctx.restore();
+	save();
+	rotate( (PI/30)*min + (PI/1800)*sec )
+	lineWidth = 10;
+	beginPath();
+	moveTo(-28,0);
+	lineTo(112,0);
+	stroke();
+	restore();
 
 	// Write seconds
-	ctx.save();
-	ctx.rotate(sec * Math.PI/30);
-	ctx.strokeStyle = "#D40000";
-	ctx.fillStyle = "#D40000";
-	ctx.lineWidth = 6;
-	ctx.beginPath();
-	ctx.moveTo(-30,0);
-	ctx.lineTo(83,0);
-	ctx.stroke();
-	ctx.beginPath();
-	ctx.arc(0,0,10,0,Math.PI*2,true);
-	ctx.fill();
-	ctx.beginPath();
-	ctx.arc(95,0,10,0,Math.PI*2,true);
-	ctx.stroke();
-	ctx.fillStyle = "#555";
-	ctx.arc(0,0,3,0,Math.PI*2,true);
-	ctx.fill();
-	ctx.restore();
+	save();
+	rotate(sec * PI/30);
+	strokeStyle = "#D40000";
+	fillStyle = "#D40000";
+	lineWidth = 6;
+	beginPath();
+	moveTo(-30,0);
+	lineTo(83,0);
+	stroke();
+	beginPath();
+	arc(0,0,10,0,PI*2,true);
+	fill();
+	beginPath();
+	arc(95,0,10,0,PI*2,true);
+	stroke();
+	fillStyle = "#555";
+	arc(0,0,3,0,PI*2,true);
+	fill();
+	restore();
 
-	ctx.beginPath();
-	ctx.lineWidth = 14;
-	ctx.strokeStyle = '#325FA2';
-	ctx.arc(0,0,142,0,Math.PI*2,true);
-	ctx.stroke();
+	beginPath();
+	lineWidth = 14;
+	strokeStyle = '#325FA2';
+	arc(0,0,142,0,PI*2,true);
+	stroke();
 
-	ctx.restore();
+	restore();
 
 }
 </script>
@@ -135,6 +135,34 @@ function draw(t){
 <script src="monaco-editor/min/vs/loader.js"></script>
 <script>
 function evalCode(code){
+
+	// Take all from ctx and put on global
+	for(var key in ctx){
+		(function(keyScoped){
+			try {
+				if(typeof ctx[keyScoped] === 'function'){
+					window[keyScoped] = function(){
+						return ctx[keyScoped].apply(ctx,arguments);
+					};
+				} else {
+					Object.defineProperty(window, keyScoped, {
+						get: function(){ return ctx[keyScoped]; },
+						set: function(value){ ctx[keyScoped] = value; },
+					});
+				}
+			} catch(err){
+				//console.error(err)
+			}
+		})(key);
+	}
+
+	// Math shortcuts
+	var keys = Object.getOwnPropertyNames(Math);
+	for(var i=0; i<keys.length; i++){
+		var key = keys[i];
+		window[key] = Math[key];
+	}
+
 	eval(code);
 	window.draw = draw; // Update the current one
 }
