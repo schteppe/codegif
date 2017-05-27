@@ -1,6 +1,12 @@
 <html>
 <head>
 	<style>
+		input[type=number] {
+			width: 50px;
+		}
+		label {
+			margin-left: 10px;
+		}
 	</style>
 </head>
 <body>
@@ -8,7 +14,7 @@
 	<ol>
 		<li>Write some HTML5 canvas code</li>
 		<li>Download gif</li>
-		<li>...</li>
+		<li>???</li>
 		<li>Profit!</li>
 	</ol>
 	<script src="b64.js"></script>
@@ -18,19 +24,22 @@
 	<canvas id="bitmap" style="display:none"></canvas>
 	<img id="image"><br>
 
-	<label>Frame Count</label>
-	<input id="frameCount" type="number" value="30"/>
+	<p>
+		<input id="downloadButton" type="submit" value="Download GIF"/>
 
-	<label>Delay</label>
-	<input id="delay" type="number" min="1" value="16"/>
+		<label>Frames</label>
+		<input id="frameCount" type="number" value="30"/>
 
-	<label>Width</label>
-	<input id="width" type="number" min="1" value="150"/>
+		<label>Delay</label>
+		<input id="delay" type="number" min="1" value="16"/>
 
-	<label>Height</label>
-	<input id="height" type="number" min="1" value="150"/>
+		<label>Width</label>
+		<input id="width" type="number" min="1" value="150"/>
 
-	<a href="#" onclick="javascript:encoder.download()">Download GIF</a>
+		<label>Height</label>
+		<input id="height" type="number" min="1" value="150"/>
+
+	</p>
 
 	<script>
 //based on: https://developer.mozilla.org/en/Canvas_tutorial/Basic_animations#An_animation_example_2
@@ -249,6 +258,9 @@ function evalCode(code){
 			inputs[name].addEventListener('change', updateGifDebounced);
 			inputs[name].addEventListener('keydown', updateGifDebounced);
 		}
+		document.getElementById('downloadButton').addEventListener('click', function(){
+			encoder.download();
+		});
 	}
 })();
 </script>
