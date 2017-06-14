@@ -13,7 +13,7 @@
 	<h1>js to gif</h1>
 	<ol>
 		<li>Write some HTML5 canvas code</li>
-		<li>Download gif</li>
+		<li>Create perfectly looping gif</li>
 		<li>???</li>
 		<li>Profit!</li>
 	</ol>
@@ -21,7 +21,7 @@
 	<script src="LZWEncoder.js"></script>
 	<script src="NeuQuant.js"></script>
 	<script src="GIFEncoder.js"></script>
-	<canvas id="bitmap" style="display:none"></canvas>
+	<canvas id="bitmap"></canvas>
 	<img id="image"><br>
 
 	<p>
@@ -56,7 +56,7 @@ function draw(t){
 <div id="container" style="width:100%;height:50%;"></div>
 <script src="monaco-editor/min/vs/loader.js"></script>
 <script>
-function evalCode(code){
+function updateCode(code){
 
 	// Take all from ctx and put on global
 	for(var key in ctx){
@@ -111,76 +111,59 @@ function evalCode(code){
 	var encoder = new GIFEncoder();
 	var frame = 0, frameCount = 0;
 	var code;
-	var dirty = false;
 
-	setInterval(function(){
-		if(!working) return;
+	function makeGif(){
+		update();
 
-		ctx.fillStyle = "rgb(255,255,255)";
-		if(normalize) ctx.fillRect(0,0,1,1); else ctx.fillRect(0,0,width,height);
-		try {
-			window.draw(frame/frameCount);
-		} catch(err){
-			console.error(err);
-			setWorking(false);
-			ctx.restore();
-			encoder.finish();
-			return;
-		}
-		console.log('Adding frame ' + frame + '...');
-		encoder.addFrame(ctx);
-
-		frame++;
-		if(frame === frameCount){
-			setWorking(false);
-			ctx.restore();
-			encoder.finish();
-			document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
-			console.log('end');
-			if(dirty){
-				dirty = false;
-				updateGif();
-			}
-		}
-
-	}, 50);
-
-	function updateGif(){
-		if(working){
-			dirty = true; // update once more when done
-			return;
-		}
-
-		code = editor.getValue();
-		try {
-			evalCode(code);
-		} catch(err){
-			console.error(err);
-			return;
-		}
-
-		frame = 0;
-		frameCount = parseInt(inputs.frameCount.value, 10);
+		var frame = 0;
+		var frameCount = parseInt(inputs.frameCount.value, 10);
 		var delay = parseInt(inputs.delay.value, 10);
 		var width = parseInt(inputs.width.value, 10);
 		var height = parseInt(inputs.height.value, 10);
-		normalize = inputs.normalize.checked;
+		var normalize = inputs.normalize.checked;
+
+		var canvas = document.createElement('canvas');
+		canvas.width = width;
+		canvas.height = height;
+		var ctx = window.ctx = canvas.getContext('2d');
 
 		encoder.setRepeat(0); //auto-loop
 		encoder.setDelay(delay);
-		canvas.width = width;
-		canvas.height = height;
 		encoder.setSize(width,height);
 		encoder.start();
-		console.log('start');
-		setWorking(true);
 
 		ctx.save();
 		if(normalize){
 			ctx.scale(width,height);
 		}
+
+		for(var i=0;i<frameCount; i++){
+			console.log('Adding frame ' + frame + '...');
+
+			ctx.fillStyle = "rgb(255,255,255)";
+			if(normalize)
+				ctx.fillRect(0,0,1,1);
+			else
+				ctx.fillRect(0,0,width,height);
+
+			try {
+				window.draw(frame/frameCount);
+			} catch(err){
+				console.error(err);
+			}
+
+			encoder.addFrame(ctx);
+
+			frame++;
+		}
+
+		ctx.restore();
+		encoder.finish();
+		//document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
+		encoder.download();
 	}
 
+	// Init editor
 	require.config({ paths: { 'vs': 'monaco-editor/min/vs' }});
 	require(['vs/editor/editor.main'], function() {
 		editor = monaco.editor.create(document.getElementById('container'), {
@@ -206,20 +189,68 @@ function evalCode(code){
 		};
 	};
 
-	var updateGifDebounced = debounce(updateGif, 1000);
+	var animationLoop = null;
+	function update(){
+
+		code = editor.getValue();
+		try {
+			updateCode(code);
+		} catch(err){
+			console.error(err);
+			return;
+		}
+
+		canvas.width = parseInt(inputs.width.value, 10);
+		canvas.height = parseInt(inputs.height.value, 10);
+		delay = parseInt(inputs.delay.value, 10);
+		frameCount = parseInt(inputs.frameCount.value, 10);
+		if(animationLoop!==null){
+			clearInterval(animationLoop);
+		}
+		animationLoop = setInterval(updateAnimationCanvas, delay);
+	}
+
+	var animationFrame = 0;
+	function updateAnimationCanvas(){
+		window.ctx = canvas.getContext('2d');
+
+		ctx.save();
+		normalize = inputs.normalize.checked;
+		if(normalize){
+			ctx.scale(canvas.width,canvas.height);
+		}
+
+		ctx.fillStyle = "rgb(255,255,255)";
+		if(normalize)
+			ctx.fillRect(0,0,1,1);
+		else
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+
+		try {
+			window.draw((animationFrame % frameCount) / frameCount);
+		} catch(err){
+			console.error(err);
+		}
+
+		ctx.restore();
+
+		animationFrame++;
+	}
+
 	function init(){
 		editor.onDidChangeModelContent(function(){
-			updateGif();
+			update();
 		});
-		updateGif();
 
 		for(var name in inputs){
-			inputs[name].addEventListener('change', updateGif);
-			inputs[name].addEventListener('keydown', updateGif);
+			inputs[name].addEventListener('change', update);
+			inputs[name].addEventListener('keydown', update);
 		}
 		document.getElementById('downloadButton').addEventListener('click', function(){
-			encoder.download();
+			makeGif();
 		});
+
+		update();
 	}
 })();
 </script>
