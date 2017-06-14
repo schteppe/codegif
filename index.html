@@ -10,7 +10,7 @@
 	</style>
 </head>
 <body>
-	<h1>js to gif</h1>
+	<h1>code2gif</h1>
 	<ol>
 		<li>Write some HTML5 canvas code</li>
 		<li>Create perfectly looping gif</li>
@@ -55,6 +55,68 @@ function draw(t){
 
 <div id="container" style="width:100%;height:50%;"></div>
 <script src="monaco-editor/min/vs/loader.js"></script>
+<div id="cheatSheet">
+	<h2>Cheat sheet</h2>
+	<ul>
+	<li>save()</li>
+	<li>restore()</li>
+
+	<li>scale(x,y)</li>
+	<li>rotate(angle)</li>
+	<li>translate(x,y)</li>
+	<li>transform(m11,m12,m21,m22,dx,dy)</li>
+	<li>setTransform(m11,m12,m21,m22,dx,dy)</li>
+
+	<li>globalAlpha=1.0</li>
+	<li>globalCompositeOperation='source-over'</li>
+
+	<li>lineWidth=1.0</li>
+	<li>lineCap='butt'</li>
+	<li>lineJoin='miter'</li>
+	<li>miterLimit=10</li>
+
+	<li>strokeStyle='black'</li>
+	<li>fillStyle='black'</li>
+	<li>shadowOffsetX=0.0</li>
+	<li>shadowOffsetY=0.0</li>
+	<li>shadowBlur=0.0</li>
+	<li>shadowColor='transparent black'</li>
+
+	<li>g=createLinearGradient(x0,y0,x1,y1)</li>
+	<li>g=createRadialGradient(x0,y0,r0,x1,y1,r1)</li>
+	<li>p=createPattern(image,repetition)</li>
+
+	<li>addColorStop(offset, color)</li>
+
+	<li>beginPath()</li>
+	<li>closePath()</li>
+	<li>fill()</li>
+	<li>stroke()</li>
+	<li>clip()</li>
+	<li>moveTo(x, y)</li>
+	<li>lineTo(x, y)</li>
+	<li>quadraticCurveTo(cpx, cpy, x, y)</li>
+	<li>bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)</li>
+	<li>arcTo(x1, y1, x2, y2, radius)</li>
+	<li>arc(x, y, radius, startAngle, endAngle, anticlockwise)</li>
+	<li>rect(x, y, w, h)</li>
+	<li>b = isPointInPath(x, y)</li>
+
+	<li>clearRect(x, y, w, h)</li>
+	<li>fillRect(x, y, w, h)</li>
+	<li>strokeRect(x, y, w, h)</li>
+
+	<li>font='10px sans-serif'</li>
+	<li>textAlign='start'</li>
+	<li>textBaseline='alphabetic'</li>
+
+	<li>fillText(text, x, y, [maxWidth])</li>
+	<li>strokeText(text, x, y, [maxWidth])</li>
+	<li>m = measureText(text)</li>
+
+	</ul>
+</div>
+
 <script>
 function updateCode(code){
 
@@ -169,7 +231,7 @@ function updateCode(code){
 		editor = monaco.editor.create(document.getElementById('container'), {
 			value: draw.toString(),
 			language: 'javascript',
-			theme: 'vs-dark'
+			theme: 'vs'
 		});
 		init();
 	});
@@ -240,6 +302,10 @@ function updateCode(code){
 	function init(){
 		editor.onDidChangeModelContent(function(){
 			update();
+		});
+
+		window.addEventListener('resize', function(){
+			editor.layout();
 		});
 
 		for(var name in inputs){
