@@ -16,10 +16,19 @@
 
 <script>
 function draw(t){
+
+	// This is your draw function
+	// The parameter "t" is the current time, a number between 0 and 1
+
+	// You can use the HTML5 canvas API directly like this:
 	beginPath();
 	fillStyle = "red";
 	arc(0.5,0.5,max(0,0.1+0.1*(1+sin(2*PI*t))),0,PI*2,true);
 	fill();
+
+	// Note that all Math properties are global too, so you can use "PI" instead of "Math.PI"
+
+	// When you're done, click "Download GIF" in the upper right corner
 }
 </script>
 
