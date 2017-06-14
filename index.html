@@ -1,54 +1,18 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
-		input[type=number] {
-			width: 50px;
-		}
-		label {
-			margin-left: 10px;
-		}
-		#cheatSheet ul {
-			font-family: Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;
-			line-height: 20px;
-			font-size: 11px;
-			list-style: none;
+		#cheatSheet {
+			height: 400px;
+			overflow: scroll;
 		}
 	</style>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-	<h1>code2gif</h1>
-	<ol>
-		<li>Write some HTML5 canvas code</li>
-		<li>Create perfectly looping gif</li>
-		<li>???</li>
-		<li>Profit!</li>
-	</ol>
-	<script src="b64.js"></script>
-	<script src="LZWEncoder.js"></script>
-	<script src="NeuQuant.js"></script>
-	<script src="GIFEncoder.js"></script>
-	<canvas id="bitmap"></canvas>
-	<img id="image"><br>
-
-	<p>
-		<input id="downloadButton" type="submit" value="Download GIF"/>
-
-		<label>Frames</label>
-		<input id="frameCount" type="number" value="30"/>
-
-		<label>Delay</label>
-		<input id="delay" type="number" min="1" value="16"/>
-
-		<label>Width</label>
-		<input id="width" type="number" min="1" value="150"/>
-
-		<label>Height</label>
-		<input id="height" type="number" min="1" value="150"/>
-
-		<input id="normalize" type="checkbox" value="1" checked/>
-		<label>Normalized coords</label>
-
-	</p>
 
 <script>
 function draw(t){
@@ -59,91 +23,175 @@ function draw(t){
 }
 </script>
 
-<script id="sample2" type="x-lol">
-function draw(t){
-	translate(0.5,0.5);
-	var s = (2+sin(2*PI*t))*0.4;
-	scale(s,s);
-	beginPath();
-	fillStyle = "red";
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">code2gif</a>
+        </div>
+        <div id="navbar" class="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <!--<li class="active"><a href="#">Editor</a></li>-->
+            <!--<li><a href="#about">About</a></li>-->
+            <!--<li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>-->
+            </li>
+          </ul>
+		  <div class="navbar-form navbar-right">
+			<button id="downloadButton" type="submit" class="btn btn-primary">Download GIF</button>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-	scale(1/150, 1/150);
-	translate(-75,-75);
-	moveTo(75, 40);
-	bezierCurveTo(75, 37, 70, 25, 50, 25);
-	bezierCurveTo(20, 25, 20, 62.5, 20, 62.5);
-	bezierCurveTo(20, 80, 40, 102, 75, 120);
-	bezierCurveTo(110, 102, 130, 80, 130, 62.5);
-	bezierCurveTo(130, 62.5, 130, 25, 100, 25);
-	bezierCurveTo(85, 25, 75, 37, 75, 40);
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-3 col-sm-3">
+				<h3>Preview</h3>
+				<script src="b64.js"></script>
+				<script src="LZWEncoder.js"></script>
+				<script src="NeuQuant.js"></script>
+				<script src="GIFEncoder.js"></script>
+				<canvas id="bitmap" width="150" height="150"></canvas>
+				<img id="image"><br>
 
-	fill();
-}
-</script>
+				<script id="sample2" type="x-lol">
+				function draw(t){
+					translate(0.5,0.5);
+					var s = (2+sin(2*PI*t))*0.4;
+					scale(s,s);
+					beginPath();
+					fillStyle = "red";
 
-<div id="container" style="width:100%;height:50%;"></div>
-<script src="monaco-editor/min/vs/loader.js"></script>
+					scale(1/150, 1/150);
+					translate(-75,-75);
+					moveTo(75, 40);
+					bezierCurveTo(75, 37, 70, 25, 50, 25);
+					bezierCurveTo(20, 25, 20, 62.5, 20, 62.5);
+					bezierCurveTo(20, 80, 40, 102, 75, 120);
+					bezierCurveTo(110, 102, 130, 80, 130, 62.5);
+					bezierCurveTo(130, 62.5, 130, 25, 100, 25);
+					bezierCurveTo(85, 25, 75, 37, 75, 40);
+
+					fill();
+				}
+				</script>
+
 <div id="cheatSheet">
-	<h2>Cheat sheet</h2>
-	<ul>
-	<li>save()</li>
-	<li>restore()</li>
+		<h3>Cheat sheet</h3>
+		<ul class="list-unstyled">
+			<li>save()</li>
+			<li>restore()</li>
 
-	<li>scale(x,y)</li>
-	<li>rotate(angle)</li>
-	<li>translate(x,y)</li>
-	<li>transform(m11,m12,m21,m22,dx,dy)</li>
-	<li>setTransform(m11,m12,m21,m22,dx,dy)</li>
+			<li>scale(x,y)</li>
+			<li>rotate(angle)</li>
+			<li>translate(x,y)</li>
+			<li>transform(m11,m12,m21,m22,dx,dy)</li>
+			<li>setTransform(m11,m12,m21,m22,dx,dy)</li>
 
-	<li>globalAlpha=1.0</li>
-	<li>globalCompositeOperation='source-over'</li>
+			<li>globalAlpha=1.0</li>
+			<li>globalCompositeOperation='source-over'</li>
 
-	<li>lineWidth=1.0</li>
-	<li>lineCap='butt'</li>
-	<li>lineJoin='miter'</li>
-	<li>miterLimit=10</li>
+			<li>lineWidth=1.0</li>
+			<li>lineCap='butt'</li>
+			<li>lineJoin='miter'</li>
+			<li>miterLimit=10</li>
 
-	<li>strokeStyle='black'</li>
-	<li>fillStyle='black'</li>
-	<li>shadowOffsetX=0.0</li>
-	<li>shadowOffsetY=0.0</li>
-	<li>shadowBlur=0.0</li>
-	<li>shadowColor='transparent black'</li>
+			<li>strokeStyle='black'</li>
+			<li>fillStyle='black'</li>
+			<li>shadowOffsetX=0.0</li>
+			<li>shadowOffsetY=0.0</li>
+			<li>shadowBlur=0.0</li>
+			<li>shadowColor='transparent black'</li>
 
-	<li>g=createLinearGradient(x0,y0,x1,y1)</li>
-	<li>g=createRadialGradient(x0,y0,r0,x1,y1,r1)</li>
-	<li>p=createPattern(image,repetition)</li>
+			<li>g=createLinearGradient(x0,y0,x1,y1)</li>
+			<li>g=createRadialGradient(x0,y0,r0,x1,y1,r1)</li>
+			<li>p=createPattern(image,repetition)</li>
 
-	<li>addColorStop(offset, color)</li>
+			<li>addColorStop(offset, color)</li>
 
-	<li>beginPath()</li>
-	<li>closePath()</li>
-	<li>fill()</li>
-	<li>stroke()</li>
-	<li>clip()</li>
-	<li>moveTo(x, y)</li>
-	<li>lineTo(x, y)</li>
-	<li>quadraticCurveTo(cpx, cpy, x, y)</li>
-	<li>bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)</li>
-	<li>arcTo(x1, y1, x2, y2, radius)</li>
-	<li>arc(x, y, radius, startAngle, endAngle, anticlockwise)</li>
-	<li>rect(x, y, w, h)</li>
-	<li>b = isPointInPath(x, y)</li>
+			<li>beginPath()</li>
+			<li>closePath()</li>
+			<li>fill()</li>
+			<li>stroke()</li>
+			<li>clip()</li>
+			<li>moveTo(x, y)</li>
+			<li>lineTo(x, y)</li>
+			<li>quadraticCurveTo(cpx, cpy, x, y)</li>
+			<li>bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)</li>
+			<li>arcTo(x1, y1, x2, y2, radius)</li>
+			<li>arc(x, y, radius, startAngle, endAngle, anticlockwise)</li>
+			<li>rect(x, y, w, h)</li>
+			<li>b = isPointInPath(x, y)</li>
 
-	<li>clearRect(x, y, w, h)</li>
-	<li>fillRect(x, y, w, h)</li>
-	<li>strokeRect(x, y, w, h)</li>
+			<li>clearRect(x, y, w, h)</li>
+			<li>fillRect(x, y, w, h)</li>
+			<li>strokeRect(x, y, w, h)</li>
 
-	<li>font='10px sans-serif'</li>
-	<li>textAlign='start'</li>
-	<li>textBaseline='alphabetic'</li>
+			<li>font='10px sans-serif'</li>
+			<li>textAlign='start'</li>
+			<li>textBaseline='alphabetic'</li>
 
-	<li>fillText(text, x, y, [maxWidth])</li>
-	<li>strokeText(text, x, y, [maxWidth])</li>
-	<li>m = measureText(text)</li>
+			<li>fillText(text, x, y, [maxWidth])</li>
+			<li>strokeText(text, x, y, [maxWidth])</li>
+			<li>m = measureText(text)</li>
+		</ul>
+	</div>
 
-	</ul>
+			</div>
+			<div class="col-md-9 col-sm-9">
+				<div class="container">
+					<div class="row">
+						<form class="form-inline">
+							<div class="form-group form-group-sm">
+								<div class="input-group" style="width:130px">
+									<div class="input-group-addon">Frames</div>
+									<input type="number" min="1" class="form-control" id="frameCount" value="30">
+								</div>
+							</div>
+							<div class="form-group form-group-sm">
+								<div class="input-group" style="width:120px">
+									<div class="input-group-addon">Delay</div>
+									<input type="number" min="1"  class="form-control" id="delay" value="16">
+								</div>
+							</div>
+							<div class="form-group form-group-sm">
+								<div class="input-group" style="width:125px">
+									<div class="input-group-addon">Width</div>
+									<input type="number" min="10"  class="form-control" id="width" value="150">
+								</div>
+							</div>
+							<div class="form-group form-group-sm">
+								<div class="input-group" style="width:125px">
+									<div class="input-group-addon">Height</div>
+									<input type="number" min="10" class="form-control" id="height" value="150">
+								</div>
+							</div>
+							<div class="checkbox">
+								<label>
+									<input id="normalize" type="checkbox" checked="checked"> Normalize coords
+								</label>
+							</div>
+						</form>
+					</div>
+					<div class="row">
+						<div id="container" style="height:500px; margin-top:20px"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+
+<script src="monaco-editor/min/vs/loader.js"></script>
 
 <script>
 function updateCode(code){
@@ -291,8 +339,6 @@ function updateCode(code){
 			return;
 		}
 
-		canvas.width = parseInt(inputs.width.value, 10);
-		canvas.height = parseInt(inputs.height.value, 10);
 		delay = parseInt(inputs.delay.value, 10);
 		frameCount = parseInt(inputs.frameCount.value, 10);
 		if(animationLoop!==null){
@@ -349,6 +395,9 @@ function updateCode(code){
 	}
 })();
 </script>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 
 </body>
 </html>
