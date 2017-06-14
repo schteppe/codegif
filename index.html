@@ -53,6 +53,28 @@ function draw(t){
 }
 </script>
 
+<script id="sample2" type="x-lol">
+function draw(t){
+	translate(0.5,0.5);
+	var s = (2+sin(2*PI*t))*0.4;
+	scale(s,s);
+	beginPath();
+	fillStyle = "red";
+
+	scale(1/150, 1/150);
+	translate(-75,-75);
+	moveTo(75, 40);
+	bezierCurveTo(75, 37, 70, 25, 50, 25);
+	bezierCurveTo(20, 25, 20, 62.5, 20, 62.5);
+	bezierCurveTo(20, 80, 40, 102, 75, 120);
+	bezierCurveTo(110, 102, 130, 80, 130, 62.5);
+	bezierCurveTo(130, 62.5, 130, 25, 100, 25);
+	bezierCurveTo(85, 25, 75, 37, 75, 40);
+
+	fill();
+}
+</script>
+
 <div id="container" style="width:100%;height:50%;"></div>
 <script src="monaco-editor/min/vs/loader.js"></script>
 <div id="cheatSheet">
@@ -194,7 +216,6 @@ function updateCode(code){
 		encoder.setSize(width,height);
 		encoder.start();
 
-		ctx.save();
 		if(normalize){
 			ctx.scale(width,height);
 		}
@@ -202,6 +223,7 @@ function updateCode(code){
 		for(var i=0;i<frameCount; i++){
 			console.log('Adding frame ' + frame + '...');
 
+			ctx.save();
 			ctx.fillStyle = "rgb(255,255,255)";
 			if(normalize)
 				ctx.fillRect(0,0,1,1);
@@ -217,9 +239,10 @@ function updateCode(code){
 			encoder.addFrame(ctx);
 
 			frame++;
+
+			ctx.restore();
 		}
 
-		ctx.restore();
 		encoder.finish();
 		//document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
 		encoder.download();
