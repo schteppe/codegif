@@ -27,7 +27,9 @@
 
 	// Note that all Math properties are global too, so you can use "PI" instead of "Math.PI"
 
-	// When you're done, click "Download GIF" in the upper right corner
+	// When you're done, click "Download GIF" in the upper right corner.
+
+	// Check out the samples (top left) if you want some inspiration!
 }</script>
 
     <nav class="navbar navbar-default navbar-static-top">
@@ -135,6 +137,16 @@
 			restore();
 		}
 	}
+}</script>
+
+<script class="sample" data-name="Image" type="x-sample">function draw(t){
+	translate(0.5,0.5);
+	rotate(t*PI*2);
+	scale(0.5,0.5);
+	var im = new Image();
+	// Data URL as image. Can be created using e.g. http://dataurl.net/#dataurlmaker
+	im.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wkBDQsyuesaVgAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAQElEQVRIx2Nk4PnPgBf8v8eIJsKoREALMmBioDEYtWDUglELRi0gAjD+fzUaRKMWUJqKRqvMUQtGLRi1YCRYAAA1Ego9VinEZgAAAABJRU5ErkJggg==";
+	drawImage(im,-0.5,-0.5,1,1);
 }</script>
 
 <script class="sample" data-name="Elastic Bezier" type="x-sample">function draw(t){
