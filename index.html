@@ -115,6 +115,19 @@
 	fill();
 }</script>
 
+<script class="sample" data-name="Elastic Bezier" type="x-sample">function draw(t){
+	var w=1,h=1;
+	beginPath();
+	moveTo(0, h/2);
+	bezierCurveTo(
+		w/2 * 1.2,  h/2 * 1.2 + sin(6*PI*t) * 0.2,
+		w/2,  h/2 + cos(6*PI*t) * 0.2,
+		w, h/2);
+	lineWidth = 0.1;
+	lineCap = 'round';
+	stroke();
+}</script>
+
 	<div id="cheatSheet">
 		<h3>Cheat sheet</h3>
 		<ul class="list-unstyled">
@@ -369,6 +382,11 @@ function updateCode(code){
 			return;
 		}
 
+		width = parseInt(inputs.width.value, 10);
+		height = parseInt(inputs.height.value, 10);
+
+		canvas.height = 150 * (height/width);
+
 		delay = parseInt(inputs.delay.value, 10);
 		frameCount = parseInt(inputs.frameCount.value, 10);
 		if(animationLoop!==null){
@@ -429,7 +447,7 @@ function updateCode(code){
 		}
 		var links = samplesList.querySelectorAll('a');
 		var clickLink = function(){
-			var code = document.querySelector('.sample[data-name=' + this.innerText + ']').innerText;
+			var code = document.querySelector('.sample[data-name=\'' + this.innerText + '\']').innerText;
 			editor.setValue(code);
 		};
 		for(var i=0; i<links.length; i++){
