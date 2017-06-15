@@ -64,7 +64,7 @@
             <li><a href="#about" data-toggle="modal" data-target="#myModal">About</a></li>
           </ul>
 		  <div class="navbar-form navbar-right">
-			<button id="downloadButton" type="submit" class="btn btn-primary">Download GIF</button>
+			<button id="downloadButton" type="submit" class="btn btn-primary">Download GIF <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
           </div>
         </div>
       </div>
@@ -98,11 +98,6 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-3 col-sm-3 col-xs-3">
-				<h3>Preview</h3>
-				<script src="b64.js"></script>
-				<script src="LZWEncoder.js"></script>
-				<script src="NeuQuant.js"></script>
-				<script src="GIFEncoder.js"></script>
 				<canvas id="bitmap" width="150" height="150" style="width:100%"></canvas>
 
 <script class="sample" data-name="Heart" type="x-sample">function draw(t){
@@ -277,7 +272,10 @@
 </div>
 
 <script src="monaco-editor/min/vs/loader.js"></script>
-
+<script src="b64.js"></script>
+<script src="LZWEncoder.js"></script>
+<script src="NeuQuant.js"></script>
+<script src="GIFEncoder.js"></script>
 <script>
 function updateCode(code){
 
