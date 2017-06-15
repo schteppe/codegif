@@ -14,23 +14,21 @@
 </head>
 <body>
 
-<script>
-function draw(t){
+<script class="sample" data-name="Circle">function draw(t){
 
 	// This is your draw function
 	// The parameter "t" is the current time, a number between 0 and 1
 
 	// You can use the HTML5 canvas API directly like this:
 	beginPath();
-	fillStyle = "red";
+	fillStyle = "blue";
 	arc(0.5,0.5,max(0,0.1+0.1*(1+sin(2*PI*t))),0,PI*2,true);
 	fill();
 
 	// Note that all Math properties are global too, so you can use "PI" instead of "Math.PI"
 
 	// When you're done, click "Download GIF" in the upper right corner
-}
-</script>
+}</script>
 
     <nav class="navbar navbar-default navbar-static-top">
       <div class="container-fluid">
@@ -40,19 +38,19 @@ function draw(t){
         <div id="navbar" class="navbar-collapse">
           <ul class="nav navbar-nav">
             <!--<li class="active"><a href="#">Editor</a></li>-->
-            <li><a href="#about" data-toggle="modal" data-target="#myModal">About</a></li>
-            <!--<li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Samples <span class="caret"></span></a>
+              <ul class="dropdown-menu" id="samples-list">
+                <!--<li><a href="#">Circle</a></li>
+                <li><a href="#">Heart</a></li>
                 <li><a href="#">Something else here</a></li>
                 <li role="separator" class="divider"></li>
                 <li class="dropdown-header">Nav header</li>
                 <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>-->
+                <li><a href="#">One more separated link</a></li>-->
+              </ul>
             </li>
+            <li><a href="#about" data-toggle="modal" data-target="#myModal">About</a></li>
           </ul>
 		  <div class="navbar-form navbar-right">
 			<button id="downloadButton" type="submit" class="btn btn-primary">Download GIF</button>
@@ -97,29 +95,27 @@ function draw(t){
 				<canvas id="bitmap" width="150" height="150"></canvas>
 				<img id="image"><br>
 
-				<script id="sample2" type="x-lol">
-				function draw(t){
-					translate(0.5,0.5);
-					var s = (2+sin(2*PI*t))*0.4;
-					scale(s,s);
-					beginPath();
-					fillStyle = "red";
+<script class="sample" data-name="Heart" type="x-sample">function draw(t){
+	translate(0.5,0.5);
+	var s = (2+sin(2*PI*t))*0.4;
+	scale(s,s);
+	beginPath();
+	fillStyle = "red";
 
-					scale(1/150, 1/150);
-					translate(-75,-75);
-					moveTo(75, 40);
-					bezierCurveTo(75, 37, 70, 25, 50, 25);
-					bezierCurveTo(20, 25, 20, 62.5, 20, 62.5);
-					bezierCurveTo(20, 80, 40, 102, 75, 120);
-					bezierCurveTo(110, 102, 130, 80, 130, 62.5);
-					bezierCurveTo(130, 62.5, 130, 25, 100, 25);
-					bezierCurveTo(85, 25, 75, 37, 75, 40);
+	scale(1/150, 1/150);
+	translate(-75,-75);
+	moveTo(75, 40);
+	bezierCurveTo(75, 37, 70, 25, 50, 25);
+	bezierCurveTo(20, 25, 20, 62.5, 20, 62.5);
+	bezierCurveTo(20, 80, 40, 102, 75, 120);
+	bezierCurveTo(110, 102, 130, 80, 130, 62.5);
+	bezierCurveTo(130, 62.5, 130, 25, 100, 25);
+	bezierCurveTo(85, 25, 75, 37, 75, 40);
 
-					fill();
-				}
-				</script>
+	fill();
+}</script>
 
-<div id="cheatSheet">
+	<div id="cheatSheet">
 		<h3>Cheat sheet</h3>
 		<ul class="list-unstyled">
 			<li>save()</li>
@@ -182,13 +178,13 @@ function draw(t){
 
 			</div>
 			<div class="col-md-9 col-sm-9">
-				<div class="container">
+				<div class="container-fluid">
 					<div class="row">
 						<form class="form-inline">
 							<div class="form-group form-group-sm">
 								<div class="input-group" style="width:130px">
 									<div class="input-group-addon">Frames</div>
-									<input type="number" min="1" class="form-control" id="frameCount" value="30">
+									<input type="number" min="1" class="form-control" id="frameCount" value="60">
 								</div>
 							</div>
 							<div class="form-group form-group-sm">
@@ -420,10 +416,25 @@ function updateCode(code){
 		for(var name in inputs){
 			inputs[name].addEventListener('change', update);
 			inputs[name].addEventListener('keydown', update);
+			inputs[name].addEventListener('keyup', update);
 		}
 		document.getElementById('downloadButton').addEventListener('click', function(){
 			makeGif();
 		});
+
+		var samplesList = document.getElementById('samples-list');
+		var samplesElements = document.getElementsByClassName('sample');
+		for(var i=0; i<samplesElements.length; i++){
+			samplesList.innerHTML += '<li><a href="#">' + samplesElements[i].attributes['data-name'].value + '</a></li>';
+		}
+		var links = samplesList.querySelectorAll('a');
+		var clickLink = function(){
+			var code = document.querySelector('.sample[data-name=' + this.innerText + ']').innerText;
+			editor.setValue(code);
+		};
+		for(var i=0; i<links.length; i++){
+			links[i].addEventListener('click', clickLink);
+		}
 
 		update();
 	}
