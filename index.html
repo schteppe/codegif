@@ -384,7 +384,17 @@ function updateCode(code){
 
 		encoder.finish();
 		//document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
-		encoder.download();
+		//encoder.download();
+
+		var save = document.createElement('a');
+		save.href = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
+		save.download = 'codegif.gif';
+		var event = document.createEvent("MouseEvents");
+		event.initMouseEvent(
+			"click", true, false, window, 0, 0, 0, 0, 0
+			, false, false, false, false, 0, null
+		);
+		save.dispatchEvent(event);
 	}
 
 	// Init editor
