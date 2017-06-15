@@ -97,14 +97,13 @@
 
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-md-3 col-sm-3">
+			<div class="col-md-3 col-sm-3 col-xs-3">
 				<h3>Preview</h3>
 				<script src="b64.js"></script>
 				<script src="LZWEncoder.js"></script>
 				<script src="NeuQuant.js"></script>
 				<script src="GIFEncoder.js"></script>
-				<canvas id="bitmap" width="150" height="150"></canvas>
-				<img id="image"><br>
+				<canvas id="bitmap" width="150" height="150" style="width:100%"></canvas>
 
 <script class="sample" data-name="Heart" type="x-sample">function draw(t){
 	translate(0.5,0.5);
@@ -233,7 +232,7 @@
 	</div>
 
 			</div>
-			<div class="col-md-9 col-sm-9">
+			<div class="col-md-9 col-sm-9 col-xs-9">
 				<div class="container-fluid">
 					<div class="row">
 						<form class="form-inline">
@@ -325,16 +324,7 @@ function updateCode(code){
 	inputs.height = document.getElementById('height');
 	inputs.normalize = document.getElementById('normalize');
 
-	var working = false;
-	function setWorking(isWorking){
-		working = isWorking;
-		var style = document.getElementById('image').style;
-		style.border = working ? 'solid 3px red' : 'solid 3px white';
-
-	}
 	var encoder = new GIFEncoder();
-	var frame = 0, frameCount = 0;
-	var code;
 
 	function makeGif(){
 		update();
@@ -427,7 +417,7 @@ function updateCode(code){
 	var animationLoop = null;
 	function update(){
 
-		code = editor.getValue();
+		var code = editor.getValue();
 		try {
 			updateCode(code);
 		} catch(err){
@@ -438,7 +428,8 @@ function updateCode(code){
 		width = parseInt(inputs.width.value, 10);
 		height = parseInt(inputs.height.value, 10);
 
-		canvas.height = 150 * (height/width);
+		canvas.width = canvas.getBoundingClientRect().width * window.devicePixelRatio;
+		canvas.height = canvas.width * (height/width);
 
 		delay = parseInt(inputs.delay.value, 10);
 		frameCount = parseInt(inputs.frameCount.value, 10);
@@ -486,6 +477,7 @@ function updateCode(code){
 		});
 
 		window.addEventListener('resize', function(){
+			update();
 			editor.layout();
 		});
 
