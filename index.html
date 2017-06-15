@@ -393,6 +393,11 @@ function updateCode(code){
 			clearInterval(animationLoop);
 		}
 		animationLoop = setInterval(updateAnimationCanvas, delay);
+
+		// Save
+		try {
+			localStorage.setItem('save', code);
+		}catch(err){}
 	}
 
 	var animationFrame = 0;
@@ -453,6 +458,12 @@ function updateCode(code){
 		for(var i=0; i<links.length; i++){
 			links[i].addEventListener('click', clickLink);
 		}
+
+		// Load saved state?
+		try {
+			var code = localStorage.getItem('save');
+			editor.setValue(code);
+		}catch(err){}
 
 		update();
 	}
