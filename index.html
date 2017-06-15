@@ -120,6 +120,23 @@
 	fillText('MOM',75,75);
 }</script>
 
+<script class="sample" data-name="Rectangles" type="x-sample">function draw(t){
+	fillStyle='rgba(0,0,0,0.75)';
+	var N=5;
+	var s=1/N;
+	for(var i=0; i<N; i++){
+		for(var j=0; j<N; j++){
+			save();
+			beginPath();
+			translate((i+0.5)*s,(j+0.5)*s);
+			rotate(PI*t/2);
+			rect(-s/2,-s/2,s,s);
+			fill();
+			restore();
+		}
+	}
+}</script>
+
 <script class="sample" data-name="Elastic Bezier" type="x-sample">function draw(t){
 	var w=1,h=1;
 	beginPath();
