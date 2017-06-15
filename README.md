@@ -1,3 +1,3 @@
-# code2gif
+# codegif
 
-Or canvasgif ? Still looking for a good name...
+Write some canvas code, generate perfectly looping gif.
