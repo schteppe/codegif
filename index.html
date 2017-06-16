@@ -143,6 +143,40 @@
 	}
 }</script>
 
+<script class="sample" data-name="Inception" type="x-sample">function draw(t){
+	var s = 1/10;
+	var s2 = s/10;
+	var s3 = s2/10;
+	var s4 = s3/10;
+
+	translate(0.5,0.5);
+	rotate(PI*t/2);
+
+	// Zoom exponentially so that z(t=0)=1 and z(t=1)=100
+	var z = exp(log(100)*t);
+	scale(z,z);
+
+	beginPath();
+	fillStyle='black';
+	rect(-s/2,-s/2,s,s);
+	fill();
+
+	beginPath();
+	fillStyle='white';
+	rect(-s2/2,-s2/2,s2,s2);
+	fill();
+
+	beginPath();
+	fillStyle='black';
+	rect(-s3/2,-s3/2,s3,s3);
+	fill();
+
+	beginPath();
+	fillStyle='white';
+	rect(-s4/2,-s4/2,s4,s4);
+	fill();
+}</script>
+
 <script class="sample" data-name="Image" type="x-sample">function draw(t){
 	translate(0.5,0.5);
 	rotate(t*PI*2);
