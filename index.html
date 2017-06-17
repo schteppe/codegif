@@ -98,6 +98,22 @@
 			<div class="col-md-3 col-sm-3 col-xs-3">
 				<canvas id="bitmap" width="150" height="150" style="width:100%"></canvas>
 
+<script class="sample" data-name="Tentacles" type="x-sample">function draw(t){
+	lineWidth=0.006;
+	for(var a=0; a<1; a+=0.05){
+		beginPath();
+		for(var r=0; r<1; r+=0.01){
+			var q=a + .1*sin(2*PI*(2*r-t));
+			var x=r*cos(2*PI*q)+.5;
+			var y=r*sin(2*PI*q)+.5;
+			if(r===0) moveTo(x,y);
+			else lineTo(x,y);
+		}
+		strokeStyle = (strokeStyle === '#000000' ? '#ff0000' : '#000000');
+		stroke();
+	}
+}</script>
+
 <script class="sample" data-name="Heart" type="x-sample">function draw(t){
 	translate(0.5,0.5);
 	var s = (2+sin(2*PI*t))*0.4;
